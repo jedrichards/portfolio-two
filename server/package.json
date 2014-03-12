@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-two-server",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "export $(cat .env|xargs) && nodemon --harmony server.js"
+  },
+  "devDependencies": {
+    "supervisor": "~0.5.7",
+    "nodemon": "~1.0.15"
+  }
+}
