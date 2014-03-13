@@ -1,4 +1,22 @@
 {
   "name": "portfolio-two-client",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "scripts": {
+    "watch": "gulp watch",
+    "dist": "gulp dist",
+    "optimise": "gulp optimise"
+  },
+  "devDependencies": {
+    "gulp": "~3.5.5",
+    "gulp-concat": "~2.1.7",
+    "gulp-clean": "~0.2.4",
+    "gulp-ng-html2js": "~0.1.6",
+    "run-sequence": "~0.3.6",
+    "gulp-minify-html": "~0.1.1",
+    "gulp-livereload": "~1.2.0",
+    "gulp-ngmin": "~0.1.2",
+    "gulp-if": "0.0.5",
+    "gulp-gzip": "0.0.5",
+    "gulp-uglify": "~0.2.1"
+  }
 }

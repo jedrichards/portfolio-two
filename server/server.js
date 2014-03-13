@@ -1,20 +1,17 @@
 var koa = require('koa');
-var static = require('koa-static');
-var route = require('koa-route');
-var send = require('koa-send');
+var koaStatic = require('koa-static');
+var koaRoute = require('koa-route');
 
 var app = koa();
-app.name = require(__dirname+'/package.json').name;
 
-app.use(require("./middleware/logger"));
-app.use(static(__dirname+'/../client/src'));
+app.use(require('./middleware/logger'));
+app.use(koaStatic(__dirname+'/../client/dist'));
+app.use(require('./middleware/missing-file-catcher'));
 
-app.use(route.get('*',function * () {
-	yield send(this,'index.html',{root:__dirname+'/../client/src'});
-}));
+app.use(require('./routes/app')(koaRoute));
 
 app.on('error',function (err) {
-	console.log(err);
+    console.error(err);
 });
 
 app.listen(process.env.PORT,function () {

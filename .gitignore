@@ -1,4 +1,7 @@
+/todo
+
 /client/dist/
+/client/src/templates/
 /client/vendor/
 /client/node_modules/
 
