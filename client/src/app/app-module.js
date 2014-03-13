@@ -1,4 +1,4 @@
 angular.module('app',[
-	'templates',
-	'base-layout'
+    'templates',
+    'base-layout'
 ]);
