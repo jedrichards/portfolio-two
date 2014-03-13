@@ -5,7 +5,12 @@
     "start": "export $(cat .env|xargs) && nodemon --harmony server.js"
   },
   "devDependencies": {
-    "supervisor": "~0.5.7",
     "nodemon": "~1.0.15"
+  },
+  "dependencies": {
+    "koa-route": "~1.1.0",
+    "koa": "~0.5.1",
+    "koa-static": "~1.4.3",
+    "koa-send": "~1.2.3"
   }
 }
