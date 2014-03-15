@@ -4,7 +4,8 @@
   "scripts": {
     "watch": "gulp watch",
     "dist": "gulp dist",
-    "optimise": "gulp optimise"
+    "optimise": "gulp optimise",
+    "release": "gulp release"
   },
   "devDependencies": {
     "gulp": "~3.5.5",
@@ -16,7 +17,12 @@
     "gulp-livereload": "~1.2.0",
     "gulp-ngmin": "~0.1.2",
     "gulp-if": "0.0.5",
-    "gulp-gzip": "0.0.5",
-    "gulp-uglify": "~0.2.1"
+    "gulp-uglify": "~0.2.1",
+    "gulp-less": "~1.2.3",
+    "gulp-minify-css": "~0.3.0",
+    "gulp-bump": "~0.1.6",
+    "gulp-template": "~0.1.1",
+    "gulp-rename": "~1.2.0",
+    "gulp-jshint": "~1.5.0"
   }
 }

@@ -1,5 +1,7 @@
 {
+  "name": "portfolio-two-client",
   "dependencies": {
-    "angular": "~1.2.14"
+    "angular": "~1.2.14",
+    "normalize-css": "~3.0.0"
   }
 }
