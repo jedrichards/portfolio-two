@@ -4,7 +4,6 @@
   "scripts": {
     "watch": "gulp watch",
     "dist": "gulp dist",
-    "optimise": "gulp optimise",
     "release": "gulp release"
   },
   "devDependencies": {
@@ -23,6 +22,10 @@
     "gulp-bump": "~0.1.6",
     "gulp-template": "~0.1.1",
     "gulp-rename": "~1.2.0",
-    "gulp-jshint": "~1.5.0"
+    "gulp-jshint": "~1.5.0",
+    "gulp-util": "~2.2.14",
+    "gulp-plumber": "~0.5.6",
+    "map-stream": "~0.1.0",
+    "jshint-stylish": "~0.1.5"
   }
 }
