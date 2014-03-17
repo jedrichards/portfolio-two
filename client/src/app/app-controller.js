@@ -1,7 +1,7 @@
 angular.module('app')
     .controller('AppCtrl',function ($scope) {
 
-        //'use strict';
+        'use strict';
 
         console.log('Hello from AppCtrl');
     });

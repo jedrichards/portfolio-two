@@ -1,7 +1,7 @@
 angular.module('base-layout')
     .controller('BaseLayoutCtrl',function ($scope) {
 
-        //'use strict';
-        var a = "jed";
+        'use strict';
+        
         console.log('Hello from BaseLayoutCtrl');
     });

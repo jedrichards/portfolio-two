@@ -22,11 +22,18 @@ var gutil = require('gulp-util');
 var plumber = require('gulp-plumber');
 var map = require('map-stream');
 
+/**
+ * Synchronously return the current semver in package.json
+ *
+ * @returns {String}
+ */
 function v () {
     return JSON.parse(fs.readFileSync('package.json','utf8')).version;
 }
 
+//
 // Util tasks
+//
 
     // Clean the build destination folder
 
@@ -43,7 +50,9 @@ function v () {
             .pipe(gulp.dest('./'));
     });
 
+//
 // HTML tasks
+//
 
     // Copy the main app HTML file into the dist folder and
     // interpolate the current app semver into the text
@@ -77,19 +86,19 @@ function v () {
             .pipe(gulp.dest('src/templates'));
     });
 
+//
 // JS tasks
+//
 
     // Lint the JS
 
     gulp.task('lint',function () {
         var success = true;
-        return gulp.src(['gulpfile.js','src/app/**/*.js'])
+        return gulp.src(['src/app/**/*.js'])
             .pipe(lint())
             .pipe(lint.reporter(stylish))
             .pipe(map(function (file,cb) {
-                if ( !file.jshint.success ) {
-                    success = false;
-                }
+                if ( !file.jshint.success ) success = false;
                 cb(null,file);
             }))
             .on('end',function () {
@@ -98,8 +107,8 @@ function v () {
     });
 
     // Concatenate the JS in a defined order (vendor files
-    // then AngularJS modules then AngularJS components) into
-    // a single main JS bundle. Also convert the dependency
+    // then AngularJS modules definitions then AngularJS components)
+    // into a single main JS bundle. Also convert the dependency
     // injection syntax to the version resistant to uglification
 
     gulp.task('js',['tpl'],function () {
@@ -122,7 +131,9 @@ function v () {
             .pipe(gulp.dest('dist/static/js'));
     });
 
+//
 // CSS tasks
+//
 
     // Compile the LESS files
 
@@ -143,19 +154,22 @@ function v () {
             .pipe(gulp.dest('dist/static/css'));
     });
 
-// Primary composite tasks
+//
+// Primary tasks
+//
 
-    // Build the app into the dist folder
+    // Create a working (non-optimised) build of the
+    // app in the dist folder
 
     gulp.task('dist',function (cb) {
-        sequence('clean','test',['html','js','less'],cb);
+        sequence('clean','lint',['html','js','less'],cb);
     });
 
     // Optimise the built app
 
     gulp.task('optimise',['uglify-js','minify-css']);
 
-    // Bump the app version, build it and optimise it
+    // Bump the app version, build it then optimise it
 
     gulp.task('release',function (cb) {
         sequence('bump','dist','optimise',cb);
@@ -163,13 +177,16 @@ function v () {
 
 // Watch tasks
 
-    // Main watch task.
+    // Main watch task. Watches different sets of files
+    // and runs specific tasks against them. Whenever
+    // the files have changed in the dist folder then
+    // manually trigger a livereload
 
     gulp.task('watch',['dist'],function () {
         var srv = livereload();
         gulp.watch('src/index.html',['html']);
         gulp.watch('src/app/**/*.js',['lint']);
-        gulp.watch(['src/**/*.js','src/**/*-tpl.html'],['js']);
+        gulp.watch(['src/app/**/*.js','src/app/**/*-tpl.html'],['js']);
         gulp.watch('less/**/*.less',['less']);
         gulp.watch(['dist/**/*'])
             .on('change',function (file) {
