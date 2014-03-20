@@ -2,6 +2,8 @@
   "name": "portfolio-two-client",
   "dependencies": {
     "angular": "~1.2.14",
-    "normalize-css": "~3.0.0"
+    "normalize-css": "~3.0.0",
+    "angular-mocks": "~1.2.14",
+    "angular-route": "~1.2.14"
   }
 }

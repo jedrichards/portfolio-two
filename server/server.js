@@ -7,7 +7,6 @@ var app = koa();
 app.use(require('./middleware/logger'));
 app.use(koaStatic(__dirname+'/../client/dist'));
 app.use(require('./middleware/missing-file-catcher'));
-
 app.use(require('./routes/app')(koaRoute));
 
 app.on('error',function (err) {

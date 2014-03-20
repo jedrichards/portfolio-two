@@ -19,8 +19,9 @@ var rename = require('gulp-rename');
 var lint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var gutil = require('gulp-util');
-var plumber = require('gulp-plumber');
 var map = require('map-stream');
+var jscs = require('gulp-jscodesniffer');
+var through = require('through2');
 
 /**
  * Synchronously return the current semver in package.json
@@ -70,20 +71,34 @@ function v () {
     // app JS bundle
 
     gulp.task('tpl',function () {
-        return gulp.src('src/**/*-tpl.html')
+        return gulp.src('src/**/*tpl.html')
             .pipe(minhtml({
                 empty: true,
                 spare: true,
                 quotes: true
             }))
             .pipe(html2js({
-                moduleName: 'templates',
                 rename: function (url) {
                     return url.split('/').pop();
                 }
             }))
-            .pipe(concat('templates-module.js'))
-            .pipe(gulp.dest('src/templates'));
+            .pipe(concat('templates.js'))
+            .pipe(through.obj(function (file,enc,cb) {
+                this.push(file);
+                cb();
+            }))
+            .pipe(gulp.dest('src'));
+    });
+
+//
+// Static asset tasks
+//
+
+    // Just copy the static assets to dist
+
+    gulp.task('static',function () {
+        return gulp.src('static/**/*')
+            .pipe(gulp.dest('dist/static'));
     });
 
 //
@@ -94,7 +109,7 @@ function v () {
 
     gulp.task('lint',function () {
         var success = true;
-        return gulp.src(['src/app/**/*.js'])
+        return gulp.src(['src/**/*.js','!src/templates.js'])
             .pipe(lint())
             .pipe(lint.reporter(stylish))
             .pipe(map(function (file,cb) {
@@ -106,16 +121,33 @@ function v () {
             });
     });
 
+    // Check the JS code style
+
+    gulp.task('jscs',function () {
+        return gulp.src(['src/**/*.js','!src/templates.js'])
+            .pipe(jscs({
+                rc: '../.jscsrc',
+                reporters: ['default','beep']
+            }))
+    });
+
     // Concatenate the JS in a defined order (vendor files
     // then AngularJS modules definitions then AngularJS components)
     // into a single main JS bundle. Also convert the dependency
     // injection syntax to the version resistant to uglification
 
-    gulp.task('js',['tpl'],function () {
+    gulp.task('js',function () {
         var glob = [
             'vendor/angular/angular.js',
-            'src/**/*-module.js',
-            'src/**/*-controller.js'
+            'vendor/angular-route/angular-route.js',
+            'src/templates.js',
+            'src/**/*mod.js',
+            'src/**/*ctrl.js',
+            'src/**/*serv.js',
+            'src/**/*conf.js',
+            'src/**/*run.js',
+            'src/**/*const.js',
+            'src/**/*dir.js'
         ];
         return gulp.src(glob)
             .pipe(gulpif(/client\/src/g,ngmin()))
@@ -123,7 +155,7 @@ function v () {
             .pipe(gulp.dest('dist/static/js'));
     });
 
-    // Uglify the main JS app file
+    // Uglify any JS in dist
 
     gulp.task('uglify-js',function () {
         return gulp.src('dist/static/js/**/*.js')
@@ -141,7 +173,7 @@ function v () {
         return gulp.src('less/styles.less')
             .pipe(less())
             .pipe(rename(v()+'.css'))
-            .pipe(gulp.dest('dist/static/css/'));
+            .pipe(gulp.dest('dist/static/css'));
     });
 
     // Minify the compiled CSS
@@ -162,7 +194,7 @@ function v () {
     // app in the dist folder
 
     gulp.task('dist',function (cb) {
-        sequence('clean','lint',['html','js','less'],cb);
+        sequence('clean',['lint','jscs'],'tpl',['html','js','less','static'],cb);
     });
 
     // Optimise the built app
@@ -185,10 +217,12 @@ function v () {
     gulp.task('watch',['dist'],function () {
         var srv = livereload();
         gulp.watch('src/index.html',['html']);
-        gulp.watch('src/app/**/*.js',['lint']);
-        gulp.watch(['src/app/**/*.js','src/app/**/*-tpl.html'],['js']);
+        gulp.watch('src/**/*.js',['lint','jscs']);
+        gulp.watch('src/**/*tpl.html',['tpl']);
+        gulp.watch('src/**/*.js',['js']);
         gulp.watch('less/**/*.less',['less']);
-        gulp.watch(['dist/**/*'])
+        gulp.watch('static/**/*',['static']);
+        gulp.watch('dist/**/*')
             .on('change',function (file) {
                 srv.changed(file.path);
             });

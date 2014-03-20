@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app">
+<html lang="en" ng-app="app-mod">
     <head>
         <title>Jed Richards | Seisaku Ltd</title>
         <link rel="stylesheet" href="/static/css/<%=v%>.css">
     </head>
-    <body ng-controller="AppCtrl">
-        <div ng-include="'base-layout-tpl.html'"></div>
+    <body>
+        <div ng-view></div>
     </body>
     <script type="text/javascript" src="/static/js/<%=v%>.js"></script>
 </html>
