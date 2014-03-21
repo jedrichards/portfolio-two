@@ -1,3 +1,1 @@
-angular.module('home-mod',[
-    'home-tpl.html'
-]);
+angular.module('home-mod',[]);

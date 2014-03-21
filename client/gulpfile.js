@@ -21,7 +21,7 @@ var stylish = require('jshint-stylish');
 var gutil = require('gulp-util');
 var map = require('map-stream');
 var jscs = require('gulp-jscodesniffer');
-var through = require('through2');
+var aggtpl = require('./tasks/aggregate-templates');
 
 /**
  * Synchronously return the current semver in package.json
@@ -83,10 +83,7 @@ function v () {
                 }
             }))
             .pipe(concat('templates.js'))
-            .pipe(through.obj(function (file,enc,cb) {
-                this.push(file);
-                cb();
-            }))
+            .pipe(aggtpl('templates-mod'))
             .pipe(gulp.dest('src'));
     });
 

@@ -1,3 +1,1 @@
-angular.module('project-mod',[
-    'project-tpl.html'
-]);
+angular.module('project-mod',[]);
