@@ -91,7 +91,7 @@ function v () {
 // Static asset tasks
 //
 
-    // Just copy the static assets to dist
+    // Copy the static assets to dist
 
     gulp.task('static',function () {
         return gulp.src('static/**/*')
