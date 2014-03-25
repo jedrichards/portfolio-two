@@ -2,8 +2,8 @@
   "name": "portfolio-two-server",
   "version": "0.0.0",
   "scripts": {
-    "start": "export $(cat .env|xargs) && nodemon --harmony server.js",
-    "clean-db": "export $(cat .env|xargs) && node --harmony server.js clean-db"
+    "start": "export $(cat .env|xargs) && nodemon --harmony_generators server.js",
+    "setup-db": "export $(cat .env|xargs) && node --harmony_generators server.js empty,init,populate"
   },
   "devDependencies": {
     "nodemon": "~1.0.15"
@@ -14,6 +14,7 @@
     "koa-static": "~1.4.3",
     "koa-send": "~1.2.3",
     "nano": "~5.7.1",
-    "co-nano": "0.0.3"
+    "co-nano": "0.0.3",
+    "co": "~3.0.5"
   }
 }

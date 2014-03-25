@@ -1,17 +1,22 @@
 var koa = require('koa');
 var static = require('koa-static');
 var route = require('koa-route');
+var co = require('co');
 var nano = require('nano')(process.env.DB_URI);
-var conano = require('co-nano');
-var db = nano.use(process.env.DB_NAME);
-var dbAction = process.argv[2];
+var conano = require('co-nano')(nano);
+var db = conano.use(process.env.DB_NAME);
+var actions = process.argv[2];
+var pkg = require('./package.json');
 var app;
 
-if ( dbAction ) {
-    require('./db/manage/'+dbAction)(nano,db,function (err,res) {
-        if ( err ) return console.error(err);
-        console.log(res);
-    });
+if ( actions ) {
+    co(function* () {
+        actions = actions.split(',');
+        for ( var i=0; i<actions.length; i++ ) {
+            var action = actions[i];
+            yield require('./db/manage/'+action)(db);
+        }
+    })();
 } else {
     initServer();
 }
@@ -32,6 +37,6 @@ function initServer () {
     });
 
     app.listen(process.env.PORT,function () {
-        console.log('Server started on',process.env.PORT,'in',process.env.NODE_ENV);
+        console.log('%s@%s started on %s in %s',pkg.name,pkg.version,process.env.PORT,process.env.NODE_ENV);
     });
 }
