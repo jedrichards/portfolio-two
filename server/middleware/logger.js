@@ -1,3 +1,8 @@
+/**
+ * Request logging middleware. Outputs the HTTP method, url, status and response
+ * time to stdout.
+ */
+
 module.exports = logger;
 
 function* logger (next) {

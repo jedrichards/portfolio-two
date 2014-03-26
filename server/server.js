@@ -23,7 +23,7 @@ if ( actions ) {
 
 function initServer () {
     app = koa();
-
+    app.db = db;
     app.outputErrors = false;
 
     app.use(require('./middleware/error'));

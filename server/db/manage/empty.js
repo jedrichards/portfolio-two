@@ -1,15 +1,16 @@
+/**
+ * Deletes all documents in the database.
+ */
+var tools = require('couchdb-tools');
+
 module.exports = empty;
 
 function* empty (db) {
-    var res = yield db.list();
-    var rows = res[0].rows;
-    if ( rows.length == 0 ) return console.log('Database was already empty');
-    var docs = rows.map(function (row) {
-        return {
-            _id: row.id,
-            _rev: row.value.rev,
-            _deleted: true
-        }
+    var docs = (yield db.list())[0];
+    docs = tools.normalise(docs);
+    if ( docs.length == 0 ) return console.log('Database was already empty');
+    docs.forEach(function (doc) {
+        doc._deleted = true;
     });
     yield db.bulk({docs:docs});
     console.log('Database emptied, '+docs.length+' docs deleted');

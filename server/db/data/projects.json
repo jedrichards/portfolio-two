@@ -1,0 +1,66 @@
+[
+    {
+        "name": "ConsciousMe",
+        "description": "Tra lala",
+        "timestamp": "18/3/2014",
+        "image": "/static/images/cm.jpg",
+        "link": {
+            "uri": "https://consciousme.com/",
+            "title": "consciousme.com"
+        },
+        "tags": [
+            "js",
+            "html",
+            "css",
+            "responsive",
+            "mobile optimised",
+            "build automation",
+            "backbone",
+            "marionette"
+        ]
+    },
+    {
+        "name": "GeoGrep",
+        "description": "This was a highly involved one-page, mobile optimised, responsive JS web app, built to demonstrate GeoGrep's new SaaS geo-spatial search REST API. The app was built using Backbone+Marionette, LeafletJS for the maps and Grunt/RequireJS for the build process. I additionally built a Node.JS server component to compliment the app which handled geocoding, geocoding autocomplete and Google Recaptcha services. Shout-out to <a href=\"http://petegoodman.com\">Pete Goodman</a> who worked on this with me.",
+        "timestamp": "29/8/2013",
+        "image": "/static/images/geogrep.jpg",
+        "link": {
+            "uri": "https://www.refind.in/",
+            "title": "www.refind.in"
+        },
+        "tags": [
+            "js",
+            "html",
+            "css",
+            "responsive",
+            "mobile optimised",
+            "node",
+            "build automation",
+            "backbone",
+            "marionette"
+        ]
+    },
+    {
+        "name": "DYOSB",
+        "description": "Design and build of a full stack web application for customising and ordering a high-spec sleeping bag. Features highly interactive JS on the frontend using Backbone+Marionette, a Node.JS/CouchDB backend running on Heroku, integration with an e-commerce layer and a Grunt based build and deployment process.",
+        "timestamp": "10/6/2013",
+        "image": "/static/images/dyosb.jpg",
+        "link": {
+            "uri": "http://www.design-your-own-sleeping-bag.com",
+            "title": "www.design-your-own-sleeping-bag.com"
+        },
+        "tags": [
+            "js",
+            "html",
+            "css",
+            "responsive",
+            "mobile optimised",
+            "node",
+            "build automation",
+            "unix",
+            "heroku",
+            "couchdb",
+            "backbone"
+        ]
+    }
+]

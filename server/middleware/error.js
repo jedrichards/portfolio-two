@@ -1,3 +1,8 @@
+/**
+ * Error handling middleware. Catches any errors thrown in downstream generator
+ * middleware and emits the error on the app instance.
+ */
+
 module.exports = error;
 
 function* error (next) {
