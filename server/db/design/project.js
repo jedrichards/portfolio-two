@@ -1,4 +1,5 @@
 module.exports = {
+    _id: '_design/project',
     views: {
         projectsById: {
             map: function (doc) {
