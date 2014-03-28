@@ -1,13 +1,16 @@
 /**
  * Syncs the design docs in the db with the versions in the app source code.
  */
+
 var ddocs = require('require-all')(process.cwd()+'/db/design');
 var tools = require('couchdb-tools');
+var util = require('util');
 
 module.exports = designDocs;
 
 function* designDocs (db) {
-    var remotes = (yield db.list({'include_docs':true,startKey:'_design',endKey:'_e'}))[0];
+    process.stdout.write("Syncing design documents ... ");
+    var remotes = (yield db.list({'include_docs':true,startkey:'_design',endkey:'_e'}))[0];
     remotes = tools.normalise(remotes);
     var locals = Object.keys(ddocs).map(function (key) {
         return tools.ddoc(ddocs[key]);
@@ -24,5 +27,5 @@ function* designDocs (db) {
         return doc.new;
     }));
     if ( docs.length > 0 ) yield db.bulk({docs:docs});
-    console.log('Database design documents updated (%s deleted, %s added, %s updated)',sync.onlyOld.length,sync.onlyNew.length,sync.bothAndUnEqual.length);
+    process.stdout.write(util.format('%s deleted, %s added, %s updated\n',sync.onlyOld.length,sync.onlyNew.length,sync.bothAndUnEqual.length));
 }

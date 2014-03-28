@@ -1,5 +1,5 @@
 var koa = require('koa');
-var static = require('koa-static');
+var files = require('koa-static');
 var route = require('koa-route');
 var co = require('co');
 var nano = require('nano')(process.env.DB_URI);
@@ -28,8 +28,9 @@ function initServer () {
 
     app.use(require('./middleware/error'));
     app.use(require('./middleware/logger'));
-    app.use(static(__dirname+'/../client/dist'));
+    app.use(files(__dirname+'/../client/dist'));
     app.use(require('./middleware/missing-file-catcher'));
+    app.use(require('./routes/projects')(route));
     app.use(require('./routes/app')(route));
 
     app.on('error',function (err) {
