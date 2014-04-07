@@ -1,6 +1,22 @@
+/*
+
+DEV WATCH
+
+- Convert html templates to JS
+- Generate index.html, dynamically include <scripts>
+- Lint JS, check JS style
+- Convert less to css, plus source map
+
+
+*/
+
+
 'use strict';
 
 var gulp = require('gulp');
+var inject = require('gulp-inject');
+var bower = require('gulp-bower-files');
+var es = require('event-stream');
 var clean = require('gulp-clean');
 var concat = require('gulp-concat');
 var html2js = require('gulp-ng-html2js');
@@ -22,6 +38,7 @@ var gutil = require('gulp-util');
 var map = require('map-stream');
 var jscs = require('gulp-jscodesniffer');
 var aggtpl = require('./tasks/aggregate-templates');
+var useref = require('gulp-useref');
 
 /**
  * Synchronously return the current semver in package.json
@@ -38,40 +55,76 @@ function v () {
 
     // Clean the build destination folder
 
-    gulp.task('clean',function () {
+    gulp.task('clean-dist',function () {
         return gulp.src('dist',{read:false})
             .pipe(clean());
     });
 
     // Bump the semver patch number in package.json
 
-    gulp.task('bump',function () {
-        return gulp.src('./package.json')
-            .pipe(bump())
-            .pipe(gulp.dest('./'));
-    });
+    // gulp.task('bump',function () {
+    //     return gulp.src('./package.json')
+    //         .pipe(bump())
+    //         .pipe(gulp.dest('./'));
+    // });
 
 //
 // HTML tasks
 //
 
+    // Inject the main index.html file with <script> tags. Application <script>
+    // tags need to be sorted with the files ending '-mod.js' coming at the top,
+    // since these are the Angular modules and need to be declared first.
+
+    gulp.task('inject-index',function () {
+        return gulp.src('src/index.html')
+            .pipe(inject(gulp.src('src/js/**/*.js',{read:false}),{
+                starttag: '<!-- inject:app:{{ext}} -->',
+                ignorePath: '/src',
+                sort: function (a,b) {
+                    a = a.filepath.indexOf('-mod.js');
+                    b = b.filepath.indexOf('-mod.js');
+                    if ( a > b ) {
+                        return -1;
+                    } else if ( a < b ) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }))
+            .pipe(inject(bower({read:false}),{
+                starttag: '<!-- inject:vendor:{{ext}} -->',
+                ignorePath: '/src'
+            }))
+            .pipe(gulp.dest('src'));
+    });
+
+    gulp.task('dist-index',function () {
+        return gulp.src('src/index.html')
+            .pipe(useref.assets())
+            .pipe(useref())
+            .pipe(gulp.dest('dist'));
+    });
+
+
     // Copy the main app HTML file into the dist folder and
     // interpolate the current app semver into the text
 
-    gulp.task('html',function () {
-        return gulp.src('src/index.html')
-            .pipe(template({
-                v: v()
-            }))
-            .pipe(gulp.dest('dist'));
-    });
+    // gulp.task('html',function () {
+    //     return gulp.src('src/index.html')
+    //         .pipe(template({
+    //             v: v()
+    //         }))
+    //         .pipe(gulp.dest('dist'));
+    // });
 
     // Convert all the app HTML templates into one AngularJS
     // module suitable for later concatenating into the main
     // app JS bundle
 
-    gulp.task('tpl',function () {
-        return gulp.src('src/**/*tpl.html')
+    gulp.task('templates',function () {
+        return gulp.src('src/js/**/*.html')
             .pipe(minhtml({
                 empty: true,
                 spare: true,
@@ -82,9 +135,9 @@ function v () {
                     return url.split('/').pop();
                 }
             }))
-            .pipe(concat('templates.js'))
+            .pipe(concat('templates-mod.js'))
             .pipe(aggtpl('templates-mod'))
-            .pipe(gulp.dest('src'));
+            .pipe(gulp.dest('src/js'));
     });
 
 //
@@ -167,10 +220,10 @@ function v () {
     // Compile the LESS files
 
     gulp.task('less',function () {
-        return gulp.src('less/styles.less')
+        return gulp.src('src/less/styles.less')
             .pipe(less())
-            .pipe(rename(v()+'.css'))
-            .pipe(gulp.dest('dist/static/css'));
+            // .pipe(rename(v()+'.css'))
+            .pipe(gulp.dest('src/css'));
     });
 
     // Minify the compiled CSS
@@ -187,22 +240,28 @@ function v () {
 // Primary tasks
 //
 
+    gulp.task('dev',function (cb) {
+        sequence('templates',['inject-index','less'],cb);
+    });
+
+    gulp.task('dist',['dist-index']);
+
     // Create a working (non-optimised) build of the
     // app in the dist folder
 
-    gulp.task('dist',function (cb) {
-        sequence('clean',['lint','jscs'],'tpl',['html','js','less','static'],cb);
-    });
+    // gulp.task('dist',function (cb) {
+    //     sequence('clean',['lint','jscs'],'tpl',['html','js','less','static'],cb);
+    // });
 
     // Optimise the built app
 
-    gulp.task('optimise',['uglify-js','minify-css']);
+    // gulp.task('optimise',['uglify-js','minify-css']);
 
     // Bump the app version, build it then optimise it
 
-    gulp.task('release',function (cb) {
-        sequence('bump','dist','optimise',cb);
-    });
+    // gulp.task('release',function (cb) {
+    //     sequence('bump','dist','optimise',cb);
+    // });
 
 // Watch tasks
 
@@ -211,16 +270,20 @@ function v () {
     // the files have changed in the dist folder then
     // manually trigger a livereload
 
-    gulp.task('watch',['dist'],function () {
-        var srv = livereload();
-        gulp.watch('src/index.html',['html']);
-        gulp.watch('src/**/*.js',['lint','jscs']);
-        gulp.watch('src/**/*tpl.html',['tpl']);
-        gulp.watch('src/**/*.js',['js']);
-        gulp.watch('less/**/*.less',['less']);
-        gulp.watch('static/**/*',['static']);
-        gulp.watch('dist/**/*')
-            .on('change',function (file) {
-                srv.changed(file.path);
-            });
+    gulp.task('watch',/*['dist'],*/function () {
+
+
+
+        // gulp.watch('src/index.html',['html']);
+        // gulp.watch('src/**/*.js',['lint','jscs']);
+        // gulp.watch('src/**/*tpl.html',['tpl']);
+        // gulp.watch('src/**/*.js',['js']);
+        // gulp.watch('less/**/*.less',['less']);
+        // gulp.watch('static/**/*',['static']);
+
+        // var srv = livereload();
+        // gulp.watch('dist/**/*')
+        //     .on('change',function (file) {
+        //         srv.changed(file.path);
+        //     });
     });

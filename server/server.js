@@ -5,7 +5,10 @@ var co = require('co');
 var nano = require('nano')(process.env.DB_URI);
 var conano = require('co-nano')(nano);
 var db = conano.use(process.env.DB_NAME);
+var path = require('path');
+
 var actions = process.argv[2];
+var staticFiles = path.normalize(process.cwd()+process.env.STATIC_FILES);
 var pkg = require('./package.json');
 var app;
 
@@ -28,7 +31,7 @@ function initServer () {
 
     app.use(require('./middleware/error'));
     app.use(require('./middleware/logger'));
-    app.use(files(__dirname+'/../client/dist'));
+    app.use(files(staticFiles));
     app.use(require('./middleware/missing-file-catcher'));
     app.use(require('./routes/projects')(route));
     app.use(require('./routes/app')(route));

@@ -2,10 +2,24 @@
 <html lang="en" ng-app="app-mod">
     <head>
         <title>Jed Richards | Seisaku Ltd</title>
-        <link rel="stylesheet" href="/static/css/<%=v%>.css">
+        <link rel="stylesheet" href="/css/styles.css">
     </head>
     <body>
         <div class="u-mainWrap" ng-view></div>
     </body>
-    <script type="text/javascript" src="/static/js/<%=v%>.js"></script>
+    <!-- build:js js/bundle.js -->
+    <!-- inject:vendor:js -->
+    <script src="/vendor/angular/angular.js"></script>
+    <script src="/vendor/angular-route/angular-route.js"></script>
+    <!-- endinject -->
+    <!-- inject:app:js -->
+    <script src="/js/pages/project/project-mod.js"></script>
+    <script src="/js/pages/home/home-mod.js"></script>
+    <script src="/js/routes/routes-mod.js"></script>
+    <script src="/js/templates-mod.js"></script>
+    <script src="/js/app-mod.js"></script>
+    <script src="/js/app-run.js"></script>
+    <script src="/js/routes/routes-conf.js"></script>
+    <!-- endinject -->
+    <!-- endbuild -->
 </html>

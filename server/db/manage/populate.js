@@ -16,10 +16,7 @@ function* populate (db) {
     });
     var remotes = (yield db.view('projects','projectsById'))[0];
     remotes = tools.normalise(remotes);
-    // console.log(remotes);
     var sync = tools.sync(projects,remotes);
-    // console.log(sync.bothAndUnEqual[0].new);
-    // console.log(sync.bothAndUnEqual[0].old);
     var docs = [];
     docs = docs.concat(sync.onlyOld.map(function (doc) {
         doc._deleted = true;

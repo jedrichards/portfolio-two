@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "watch": "gulp watch",
+    "dev": "gulp dev",
     "dist": "gulp dist",
     "release": "gulp release",
     "test": "node_modules/karma/bin/karma start"
@@ -31,6 +32,10 @@
     "karma-phantomjs-launcher": "~0.1.2",
     "karma-beep-reporter": "~0.1.3",
     "gulp-jscodesniffer": "0.0.1",
-    "gulp-ng-html2js": "~0.1.6"
+    "gulp-ng-html2js": "~0.1.6",
+    "gulp-inject": "~0.4.1",
+    "gulp-bower-files": "~0.2.1",
+    "event-stream": "~3.1.1",
+    "gulp-useref": "~0.3.0"
   }
 }
