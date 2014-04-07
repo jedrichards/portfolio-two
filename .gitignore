@@ -4,7 +4,6 @@ npm-debug.log
 /todo
 
 /client/dist/
-/client/src/templates/
-/client/vendor/
+/client/src/vendor/
 
 /server/.env
