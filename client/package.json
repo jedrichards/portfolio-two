@@ -15,13 +15,10 @@
     "run-sequence": "~0.3.6",
     "gulp-minify-html": "~0.1.1",
     "gulp-livereload": "~1.2.0",
-    "gulp-ngmin": "~0.1.2",
-    "gulp-if": "0.0.5",
     "gulp-uglify": "~0.2.1",
     "gulp-less": "~1.2.3",
     "gulp-minify-css": "~0.3.0",
     "gulp-bump": "~0.1.6",
-    "gulp-template": "~0.1.1",
     "gulp-rename": "~1.2.0",
     "gulp-jshint": "~1.5.0",
     "gulp-util": "~2.2.14",
@@ -35,7 +32,6 @@
     "gulp-ng-html2js": "~0.1.6",
     "gulp-inject": "~0.4.1",
     "gulp-bower-files": "~0.2.1",
-    "event-stream": "~3.1.1",
     "gulp-useref": "~0.3.0",
     "gulp-replace": "~0.2.0"
   }

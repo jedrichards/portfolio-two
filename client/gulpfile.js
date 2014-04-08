@@ -1,36 +1,19 @@
-/*
-
-DEV WATCH
-
-- Convert html templates to JS
-- Generate index.html, dynamically include <scripts>
-- Lint JS, check JS style
-- Convert less to css, plus source map
-
-
-*/
-
-
 'use strict';
 
 var gulp = require('gulp');
 var inject = require('gulp-inject');
 var bower = require('gulp-bower-files');
-var es = require('event-stream');
 var clean = require('gulp-clean');
-var concat = require('gulp-concat');
+var concat = require('gulp-§');
 var html2js = require('gulp-ng-html2js');
 var sequence = require('run-sequence');
 var minhtml = require('gulp-minify-html');
 var mincss = require('gulp-minify-css');
 var livereload = require('gulp-livereload');
-var ngmin = require('gulp-ngmin');
-var gulpif = require('gulp-if');
 var uglify = require('gulp-uglify');
 var less = require('gulp-less');
 var bump = require('gulp-bump');
 var fs = require('fs');
-var template = require('gulp-template');
 var rename = require('gulp-rename');
 var lint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
