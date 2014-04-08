@@ -39,6 +39,7 @@ var map = require('map-stream');
 var jscs = require('gulp-jscodesniffer');
 var aggtpl = require('./tasks/aggregate-templates');
 var useref = require('gulp-useref');
+var replace = require('gulp-replace');
 
 /**
  * Synchronously return the current semver in package.json
@@ -50,7 +51,7 @@ function v () {
 }
 
 //
-// Util tasks
+// Utility tasks
 //
 
     // Clean the build destination folder
@@ -62,11 +63,11 @@ function v () {
 
     // Bump the semver patch number in package.json
 
-    // gulp.task('bump',function () {
-    //     return gulp.src('./package.json')
-    //         .pipe(bump())
-    //         .pipe(gulp.dest('./'));
-    // });
+    gulp.task('bump',function () {
+        return gulp.src('./package.json')
+            .pipe(bump())
+            .pipe(gulp.dest('./'));
+    });
 
 //
 // HTML tasks
@@ -74,7 +75,8 @@ function v () {
 
     // Inject the main index.html file with <script> tags. Application <script>
     // tags need to be sorted with the files ending '-mod.js' coming at the top,
-    // since these are the Angular modules and need to be declared first.
+    // since these are the Angular module declarations and need to be declared
+    // before attaching any components to them.
 
     gulp.task('inject-index',function () {
         return gulp.src('src/index.html')
@@ -100,30 +102,22 @@ function v () {
             .pipe(gulp.dest('src'));
     });
 
+    // Copy the main index.html file to the dist folder and interpolate the
+    // current app version into the file contents
+
     gulp.task('dist-index',function () {
+        var ver = v();
         return gulp.src('src/index.html')
-            .pipe(useref.assets())
             .pipe(useref())
+            .pipe(replace(/APP_VERSION = 'dev'/,'APP_VERSION = \'v'+ver+'\''))
+            .pipe(replace(/\/css\/styles.css/,'/v'+ver+'/css/styles.css'))
+            .pipe(replace(/\/js\/bundle.js/,'/v'+ver+'/js/bundle.js'))
             .pipe(gulp.dest('dist'));
     });
 
+    // Convert all the app HTML templates into one AngularJS module
 
-    // Copy the main app HTML file into the dist folder and
-    // interpolate the current app semver into the text
-
-    // gulp.task('html',function () {
-    //     return gulp.src('src/index.html')
-    //         .pipe(template({
-    //             v: v()
-    //         }))
-    //         .pipe(gulp.dest('dist'));
-    // });
-
-    // Convert all the app HTML templates into one AngularJS
-    // module suitable for later concatenating into the main
-    // app JS bundle
-
-    gulp.task('templates',function () {
+    gulp.task('gen-template-js',function () {
         return gulp.src('src/js/**/*.html')
             .pipe(minhtml({
                 empty: true,
@@ -144,22 +138,24 @@ function v () {
 // Static asset tasks
 //
 
-    // Copy the static assets to dist
+    // Copy non-JS static assets to dist
 
-    gulp.task('static',function () {
-        return gulp.src('static/**/*')
-            .pipe(gulp.dest('dist/static'));
+    gulp.task('dist-static',function () {
+        return gulp.src(['src/**/*.jpg','src/**/*.png','src/**/*.css','!src/vendor/**/*'])
+            .pipe(gulp.dest('dist'));
     });
 
 //
 // JS tasks
 //
 
-    // Lint the JS
+    // Lint the JS with JSHint. It should pick up the '.jshintrc' file at the
+    // root of the project. Exclude the 'templates-mod.js' file since this is
+    // generated.
 
-    gulp.task('lint',function () {
+    gulp.task('lint-js',function () {
         var success = true;
-        return gulp.src(['src/**/*.js','!src/templates.js'])
+        return gulp.src(['src/js/**/*.js','!src/js/templates-mod.js'])
             .pipe(lint())
             .pipe(lint.reporter(stylish))
             .pipe(map(function (file,cb) {
@@ -171,119 +167,94 @@ function v () {
             });
     });
 
-    // Check the JS code style
+    // Check the JS code style with JSCodeSniffer. It uses the '.jscsrc' file at
+    // the root of the project. Exclude the 'templates-mod.js' file since this is
+    // generated.
 
-    gulp.task('jscs',function () {
-        return gulp.src(['src/**/*.js','!src/templates.js'])
+    gulp.task('js-style',function () {
+        return gulp.src(['src/js/**/*.js','!src/js/templates-mod.js'])
             .pipe(jscs({
                 rc: '../.jscsrc',
                 reporters: ['default','beep']
             }))
     });
 
-    // Concatenate the JS in a defined order (vendor files
-    // then AngularJS modules definitions then AngularJS components)
-    // into a single main JS bundle. Also convert the dependency
-    // injection syntax to the version resistant to uglification
+    // Concatenate any JS referenced in the main index.html file's <script>
+    // tags into a single bundle and copy to dist.
 
-    gulp.task('js',function () {
-        var glob = [
-            'vendor/angular/angular.js',
-            'vendor/angular-route/angular-route.js',
-            'src/templates.js',
-            'src/**/*mod.js',
-            'src/**/*ctrl.js',
-            'src/**/*serv.js',
-            'src/**/*conf.js',
-            'src/**/*run.js',
-            'src/**/*const.js',
-            'src/**/*dir.js'
-        ];
-        return gulp.src(glob)
-            .pipe(gulpif(/client\/src/g,ngmin()))
-            .pipe(concat(v()+'.js'))
-            .pipe(gulp.dest('dist/static/js'));
+    gulp.task('bundle-js',function () {
+        return gulp.src('src/index.html')
+            .pipe(useref.assets())
+            .pipe(gulp.dest('dist'));
     });
 
     // Uglify any JS in dist
 
     gulp.task('uglify-js',function () {
-        return gulp.src('dist/static/js/**/*.js')
+        return gulp.src('dist/js/**/*.js')
             .pipe(uglify())
-            .pipe(gulp.dest('dist/static/js'));
+            .pipe(gulp.dest('dist/js'));
     });
 
 //
 // CSS tasks
 //
 
-    // Compile the LESS files
+    // Compile the LESS files into src
 
     gulp.task('less',function () {
         return gulp.src('src/less/styles.less')
             .pipe(less())
-            // .pipe(rename(v()+'.css'))
             .pipe(gulp.dest('src/css'));
     });
 
-    // Minify the compiled CSS
+    // Minify any CSS in dist
 
     gulp.task('minify-css',function () {
-        return gulp.src('dist/static/css/**/*.css')
+        return gulp.src('dist/**/*.css')
             .pipe(mincss({
                 keepSpecialComments: 0
             }))
-            .pipe(gulp.dest('dist/static/css'));
+            .pipe(gulp.dest('dist'));
     });
 
 //
 // Primary tasks
 //
 
-    gulp.task('dev',function (cb) {
-        sequence('templates',['inject-index','less'],cb);
+    // Run all tasks related to processing files in the 'src' folder during
+    // day-to-day developement
+
+    gulp.task('src',function (cb) {
+        sequence('lint-js','js-style','gen-template-js',['inject-index','less'],cb);
     });
 
-    gulp.task('dist',['dist-index']);
+    // Generate an optimised version of the app in the 'dist' folder
 
-    // Create a working (non-optimised) build of the
-    // app in the dist folder
+    gulp.task('dist',function (cb) {
+        sequence('src','clean-dist','dist-static',['minify-css','bundle-js','dist-index'],'uglify-js',cb);
+    });
 
-    // gulp.task('dist',function (cb) {
-    //     sequence('clean',['lint','jscs'],'tpl',['html','js','less','static'],cb);
-    // });
+    // Bump the app version in package.json before running the 'dist' task
 
-    // Optimise the built app
-
-    // gulp.task('optimise',['uglify-js','minify-css']);
-
-    // Bump the app version, build it then optimise it
-
-    // gulp.task('release',function (cb) {
-    //     sequence('bump','dist','optimise',cb);
-    // });
+    gulp.task('release',function (cb) {
+        sequence('bump','dist',cb);
+    });
 
 // Watch tasks
 
-    // Main watch task. Watches different sets of files
-    // and runs specific tasks against them. Whenever
-    // the files have changed in the dist folder then
-    // manually trigger a livereload
+    // Main watch task. Watches different sets of files and runs specific tasks
+    // against them.
 
-    gulp.task('watch',/*['dist'],*/function () {
+    gulp.task('watch',['src'],function () {
 
+        gulp.watch('src/js/**/*.js',['lint-js','js-style','inject-index']);
+        gulp.watch('src/js/**/*-tpl.html',['gen-template-js']);
+        gulp.watch('src/less/**/*.less',['less']);
 
-
-        // gulp.watch('src/index.html',['html']);
-        // gulp.watch('src/**/*.js',['lint','jscs']);
-        // gulp.watch('src/**/*tpl.html',['tpl']);
-        // gulp.watch('src/**/*.js',['js']);
-        // gulp.watch('less/**/*.less',['less']);
-        // gulp.watch('static/**/*',['static']);
-
-        // var srv = livereload();
-        // gulp.watch('dist/**/*')
-        //     .on('change',function (file) {
-        //         srv.changed(file.path);
-        //     });
+        var srv = livereload();
+        gulp.watch(['src/js/**/*.js','src/css/**/*.css'])
+            .on('change',function (file) {
+                srv.changed(file.path);
+            });
     });

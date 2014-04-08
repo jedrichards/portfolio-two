@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "watch": "gulp watch",
-    "dev": "gulp dev",
+    "src": "gulp src",
     "dist": "gulp dist",
     "release": "gulp release",
     "test": "node_modules/karma/bin/karma start"
@@ -36,6 +36,7 @@
     "gulp-inject": "~0.4.1",
     "gulp-bower-files": "~0.2.1",
     "event-stream": "~3.1.1",
-    "gulp-useref": "~0.3.0"
+    "gulp-useref": "~0.3.0",
+    "gulp-replace": "~0.2.0"
   }
 }

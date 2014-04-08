@@ -31,7 +31,8 @@ function initServer () {
 
     app.use(require('./middleware/error'));
     app.use(require('./middleware/logger'));
-    app.use(files(staticFiles));
+    app.use(require('./middleware/static-versioning'));
+    app.use(files(staticFiles,{maxage:30*24*60*60*1000}));
     app.use(require('./middleware/missing-file-catcher'));
     app.use(require('./routes/projects')(route));
     app.use(require('./routes/app')(route));

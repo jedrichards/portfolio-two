@@ -8,7 +8,7 @@
 
 module.exports = missingFileCatcher;
 
-var types = ['jpg','css','js','html'];
+var types = ['jpg','png','css','js','html'];
 
 function* missingFileCatcher (next) {
     var ext = this.path.split('.').pop();

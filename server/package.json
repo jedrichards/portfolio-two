@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "export $(cat .env|xargs) && nodemon --harmony_generators server.js",
+    "start-dist": "export $(cat .env|xargs) && STATIC_FILES=./../client/dist PORT=3001 nodemon --harmony_generators server.js",
     "empty-db": "export $(cat .env|xargs) && node --harmony_generators server.js empty",
     "sync-db": "export $(cat .env|xargs) && node --harmony_generators server.js design-docs,populate"
   },

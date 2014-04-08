@@ -154,5 +154,17 @@
   },
   "ArrayLiteralConventions": {
     "requireOnePerLineWhenMultiline": true
+  },
+  "FunctionDeclarationParameterListSpacing": {
+    "allowTrailingWhitespaces": 1,
+    "allowPrecedingWhitespaces": 1
+  },
+  "FunctionExpressionParameterListSpacing": {
+    "allowTrailingWhitespaces": 1,
+    "allowPrecedingWhitespaces": 1
+  },
+  "CallExpressionArgumentListSpacing": {
+    "allowTrailingWhitespaces": 0,
+    "allowPrecedingWhitespaces": 0
   }
 }
