@@ -1,28 +1,28 @@
 'use strict';
 
-var gulp = require('gulp');
-var inject = require('gulp-inject');
+var aggtpl = require('./tasks/aggregate-templates');
 var bower = require('gulp-bower-files');
+var bump = require('gulp-bump');
 var clean = require('gulp-clean');
 var concat = require('gulp-§');
-var html2js = require('gulp-ng-html2js');
-var sequence = require('run-sequence');
-var minhtml = require('gulp-minify-html');
-var mincss = require('gulp-minify-css');
-var livereload = require('gulp-livereload');
-var uglify = require('gulp-uglify');
-var less = require('gulp-less');
-var bump = require('gulp-bump');
 var fs = require('fs');
-var rename = require('gulp-rename');
-var lint = require('gulp-jshint');
-var stylish = require('jshint-stylish');
+var gulp = require('gulp');
 var gutil = require('gulp-util');
-var map = require('map-stream');
+var html2js = require('gulp-ng-html2js');
+var inject = require('gulp-inject');
 var jscs = require('gulp-jscodesniffer');
-var aggtpl = require('./tasks/aggregate-templates');
-var useref = require('gulp-useref');
+var less = require('gulp-less');
+var lint = require('gulp-jshint');
+var livereload = require('gulp-livereload');
+var map = require('map-stream');
+var mincss = require('gulp-minify-css');
+var minhtml = require('gulp-minify-html');
+var rename = require('gulp-rename');
 var replace = require('gulp-replace');
+var sequence = require('run-sequence');
+var stylish = require('jshint-stylish');
+var uglify = require('gulp-uglify');
+var useref = require('gulp-useref');
 
 /**
  * Synchronously return the current semver in package.json
@@ -56,10 +56,11 @@ function v () {
 // HTML tasks
 //
 
-    // Inject the main index.html file with <script> tags. Application <script>
+    // Inject the main 'index.html' file with <script> tags. Application <script>
     // tags need to be sorted with the files ending '-mod.js' coming at the top,
     // since these are the Angular module declarations and need to be declared
-    // before attaching any components to them.
+    // before attaching any components to them. Additionally copy all the lib JS
+    // from the Bower vendor folder.
 
     gulp.task('inject-index',function () {
         return gulp.src('src/index.html')
@@ -101,7 +102,7 @@ function v () {
     // Convert all the app HTML templates into one AngularJS module
 
     gulp.task('gen-template-js',function () {
-        return gulp.src('src/js/**/*.html')
+        return gulp.src('src/js/**/*-tpl.html')
             .pipe(minhtml({
                 empty: true,
                 spare: true,
