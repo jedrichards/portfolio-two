@@ -4,11 +4,12 @@
     "angular": "~1.2.14",
     "normalize-css": "~3.0.0",
     "angular-mocks": "~1.2.14",
-    "angular-route": "~1.2.14"
- },
+    "angular-route": "~1.2.14",
+    "angular-resource": "~1.2.16"
+  },
   "overrides": {
-      "angular-mocks": {
-          "ignore": true
-      }
+    "angular-mocks": {
+      "ignore": true
+    }
   }
 }

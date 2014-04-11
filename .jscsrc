@@ -79,7 +79,7 @@
     "allowSingleQuotes": true
   },
   "VariableNamingConventions": {
-    "allowCase": ["camel"],
+    "allowCase": ["camel","pascal"],
     "allowRepeating": true,
     "allowNumbers": true
   },
