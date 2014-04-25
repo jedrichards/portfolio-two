@@ -66,18 +66,19 @@ function v () {
         return gulp.src('src/index.html')
             .pipe(inject(gulp.src('src/js/**/*.js',{read:false}),{
                 starttag: '<!-- inject:app:{{ext}} -->',
-                ignorePath: '/src',
-                sort: function (a,b) {
-                    a = a.filepath.indexOf('-mod.js');
-                    b = b.filepath.indexOf('-mod.js');
-                    if ( a > b ) {
-                        return -1;
-                    } else if ( a < b ) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
+                ignorePath: '/src'
+                // ,
+                // sort: function (a,b) {
+                //     a = a.filepath.indexOf('-mod.js');
+                //     b = b.filepath.indexOf('-mod.js');
+                //     if ( a > b ) {
+                //         return -1;
+                //     } else if ( a < b ) {
+                //         return 1;
+                //     } else {
+                //         return 0;
+                //     }
+                // }
             }))
             .pipe(inject(bower({read:false}),{
                 starttag: '<!-- inject:vendor:{{ext}} -->',
@@ -102,7 +103,7 @@ function v () {
     // Convert all the app HTML templates into one AngularJS module
 
     gulp.task('gen-template-js',function () {
-        return gulp.src('src/js/**/*-tpl.html')
+        return gulp.src('src/js/**/*.html')
             .pipe(minhtml({
                 empty: true,
                 spare: true,
@@ -113,9 +114,9 @@ function v () {
                     return url.split('/').pop();
                 }
             }))
-            .pipe(concat('templates-mod.js'))
-            .pipe(aggtpl('templates-mod'))
-            .pipe(gulp.dest('src/js'));
+            .pipe(concat('templates.js'))
+            .pipe(aggtpl('templates'))
+            .pipe(gulp.dest('src/js/components/templates'));
     });
 
 //
@@ -139,7 +140,7 @@ function v () {
 
     gulp.task('lint-js',function () {
         var success = true;
-        return gulp.src(['src/js/**/*.js','!src/js/templates-mod.js'])
+        return gulp.src(['src/js/**/*.js','!**/*templates.js'])
             .pipe(lint())
             .pipe(lint.reporter(stylish))
             .pipe(map(function (file,cb) {
@@ -156,7 +157,7 @@ function v () {
     // generated.
 
     gulp.task('js-style',function () {
-        return gulp.src(['src/js/**/*.js','!src/js/templates-mod.js'])
+        return gulp.src(['src/js/**/*.js','!**/*templates.js'])
             .pipe(jscs({
                 rc: '../.jscsrc',
                 reporters: ['default','beep']

@@ -3,7 +3,7 @@ var util = require('util');
 
 module.exports = function (moduleName) {
 
-    stream = through.obj(function (file,enc,cb) {
+    var stream = through.obj(function (file,enc,cb) {
         var templates = file.contents.toString().match(/^angular\.module\('(.*?)'/gm);
         templates.forEach(function (template,index) {
             template = template.replace(/angular.module\(/g,'');
