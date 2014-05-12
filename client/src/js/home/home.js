@@ -1,1 +1,3 @@
-angular.module('home',[]);
+angular.module('home',[
+    'project-list'
+]);

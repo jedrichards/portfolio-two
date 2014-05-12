@@ -234,7 +234,7 @@ function v () {
     gulp.task('watch',['src'],function () {
 
         gulp.watch('src/js/**/*.js',['lint-js','js-style','inject-index']);
-        gulp.watch('src/js/**/*-tpl.html',['gen-template-js']);
+        gulp.watch('src/js/**/*.html',['gen-template-js']);
         gulp.watch('src/less/**/*.less',['less']);
 
         var srv = livereload();

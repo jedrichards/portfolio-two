@@ -19,6 +19,7 @@
     "co-nano": "0.0.3",
     "co": "~3.0.5",
     "couchdb-tools": "~0.0.1",
-    "require-all": "0.0.8"
+    "require-all": "0.0.8",
+    "path-to-regexp": "~0.1.2"
   }
 }

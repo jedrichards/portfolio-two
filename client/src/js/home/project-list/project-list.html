@@ -1,0 +1,6 @@
+<div ng-controller='ProjectListCtrl'>
+    <h2>Projects</h2>
+    <ul class='list'>
+        <li ng-repeat='project in projects'>{{project.timestamp}} {{project.name}} {{project.description}}</li>
+    </ul>
+</div>
