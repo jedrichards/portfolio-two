@@ -57,28 +57,15 @@ function v () {
 //
 
     // Inject the main 'index.html' file with <script> tags. Application <script>
-    // tags need to be sorted with the files ending '-mod.js' coming at the top,
-    // since these are the Angular module declarations and need to be declared
-    // before attaching any components to them. Additionally copy all the lib JS
-    // from the Bower vendor folder.
+    // tags can be injected in any order because of the Angular module function
+    // shim (module creation and manipulation is order agnostic with the shim).
+    // Additionally copy all the lib JS from the Bower vendor folder.
 
     gulp.task('inject-index',function () {
         return gulp.src('src/index.html')
             .pipe(inject(gulp.src('src/js/**/*.js',{read:false}),{
                 starttag: '<!-- inject:app:{{ext}} -->',
                 ignorePath: '/src'
-                // ,
-                // sort: function (a,b) {
-                //     a = a.filepath.indexOf('-mod.js');
-                //     b = b.filepath.indexOf('-mod.js');
-                //     if ( a > b ) {
-                //         return -1;
-                //     } else if ( a < b ) {
-                //         return 1;
-                //     } else {
-                //         return 0;
-                //     }
-                // }
             }))
             .pipe(inject(bower({read:false}),{
                 starttag: '<!-- inject:vendor:{{ext}} -->',
@@ -100,7 +87,8 @@ function v () {
             .pipe(gulp.dest('dist'));
     });
 
-    // Convert all the app HTML templates into one AngularJS module
+    // Convert all the app HTML templates into one AngularJS module while
+    // minifying the HTML content.
 
     gulp.task('gen-template-js',function () {
         return gulp.src('src/js/**/*.html')
@@ -123,7 +111,8 @@ function v () {
 // Static asset tasks
 //
 
-    // Copy non-JS static assets to dist
+    // Copy non-JS static assets to dist. Exclude the Bower components since
+    // we're using gulp bower for those.
 
     gulp.task('dist-static',function () {
         return gulp.src(['src/**/*.jpg','src/**/*.png','src/**/*.css','!src/vendor/**/*'])
