@@ -23,6 +23,7 @@ var sequence = require('run-sequence');
 var stylish = require('jshint-stylish');
 var uglify = require('gulp-uglify');
 var useref = require('gulp-useref');
+var ngmin = require('gulp-ngmin');
 
 /**
  * Synchronously return the current semver in package.json
@@ -162,10 +163,11 @@ function v () {
             .pipe(gulp.dest('dist'));
     });
 
-    // Uglify any JS in dist
+    // Rewrite Angular dependency injection syntax and then compress JS
 
-    gulp.task('uglify-js',function () {
+    gulp.task('process-js',function () {
         return gulp.src('dist/js/**/*.js')
+            .pipe(ngmin())
             .pipe(uglify())
             .pipe(gulp.dest('dist/js'));
     });
@@ -206,7 +208,7 @@ function v () {
     // Generate an optimised version of the app in the 'dist' folder
 
     gulp.task('dist',function (cb) {
-        sequence('src','clean-dist','dist-static',['minify-css','bundle-js','dist-index'],'uglify-js',cb);
+        sequence('src','clean-dist','dist-static',['minify-css','bundle-js','dist-index'],'process-js',cb);
     });
 
     // Bump the app version in package.json before running the 'dist' task

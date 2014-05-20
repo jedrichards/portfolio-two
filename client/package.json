@@ -34,6 +34,7 @@
     "gulp-bower-files": "~0.2.1",
     "gulp-useref": "~0.3.0",
     "gulp-replace": "~0.2.0",
-    "through2": "~0.4.1"
+    "through2": "~0.4.1",
+    "gulp-ngmin": "~0.3.0"
   }
 }
